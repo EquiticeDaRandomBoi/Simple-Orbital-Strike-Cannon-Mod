@@ -3,9 +3,9 @@
 	"id": "orbitalstrike",
 	"version": "${version}",
 	"name": "Simple Orbital Strike",
-	"description": "Summon devastating orbital strikes with fishing rods!",
+	"description": "Summon orbital strikes with fishing rods!",
 	"authors": [
-		"weemibie"
+		"Equitice"
 	],
 	"contact": {},
 	"license": "MIT",
