@@ -1,0 +1,26 @@
+{
+	"schemaVersion": 1,
+	"id": "orbitalstrike",
+	"version": "${version}",
+	"name": "Simple Orbital Strike",
+	"description": "Summon devastating orbital strikes with fishing rods!",
+	"authors": [
+		"weemibie"
+	],
+	"contact": {},
+	"license": "MIT",
+	"environment": "*",
+	"entrypoints": {
+		"main": [
+			"com.orbitalstrike.OrbitalStrikeMod"
+		]
+	},
+	"mixins": [],
+	"depends": {
+		"fabricloader": ">=0.15.0",
+		"minecraft": ">=1.21",
+		"java": ">=21",
+		"fabric-api": "*"
+	},
+	"suggests": {}
+}
