@@ -1,28 +1,24 @@
-# Build output
+# gradle
+.gradle/
 build/
 out/
+classes/
 
-# Gradle
-.gradle/
-gradle/wrapper/gradle-wrapper.jar
+# eclipse
+*.launch
 
-# IDE
+# idea
 .idea/
 *.iml
+*.ipr
+*.iws
+
+# vscode
+.settings/
 .vscode/
+bin/
+.classpath
+.project
 
-# Runtime
+# fabric
 run/
-
-# OS
-.DS_Store
-Thumbs.db
-
-# Misc
-*.log
-build-*.ps1
-upload-*.ps1
-*-upload.ps1
-*-update.ps1
-verify-*.ps1
-releases/
