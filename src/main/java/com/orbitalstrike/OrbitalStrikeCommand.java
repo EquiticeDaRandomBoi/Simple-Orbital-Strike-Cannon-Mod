@@ -4,75 +4,77 @@ import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.context.CommandContext;
-import net.minecraft.component.DataComponentTypes;
-import net.minecraft.component.type.NbtComponent;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
-import net.minecraft.nbt.NbtCompound;
-import net.minecraft.server.command.CommandManager;
-import net.minecraft.server.command.ServerCommandSource;
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.text.Text;
+import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.commands.Commands;
+import net.minecraft.server.permissions.Permission;
+import net.minecraft.server.permissions.PermissionLevel;
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.item.component.CustomData;
 
 public class OrbitalStrikeCommand {
 
-	public static void register(CommandDispatcher<ServerCommandSource> dispatcher) {
-		dispatcher.register(CommandManager.literal("orbitalstrike")
-			.requires(source -> source.hasPermissionLevel(2))
-			.then(CommandManager.argument("type", StringArgumentType.string())
+	public static void register(CommandDispatcher<CommandSourceStack> dispatcher) {
+		dispatcher.register(Commands.literal("orbitalstrike")
+			.requires(source -> source.permissions().hasPermission(new Permission.HasCommandLevel(PermissionLevel.GAMEMASTERS)))
+			.then(Commands.argument("type", StringArgumentType.string())
 				.suggests((context, builder) -> {
 					builder.suggest("stab");
 					builder.suggest("nuke");
 					return builder.buildFuture();
 				})
 				.executes(OrbitalStrikeCommand::giveOrbitalStrikeRod)
-				.then(CommandManager.argument("count", IntegerArgumentType.integer(1, 64))
+				.then(Commands.argument("count", IntegerArgumentType.integer(1, 64))
 					.executes(OrbitalStrikeCommand::giveOrbitalStrikeRodWithCount)
 				)
 			)
 		);
 	}
 
-	private static int giveOrbitalStrikeRod(CommandContext<ServerCommandSource> context) {
+	private static int giveOrbitalStrikeRod(CommandContext<CommandSourceStack> context) {
 		return giveRods(context, 1);
 	}
 
-	private static int giveOrbitalStrikeRodWithCount(CommandContext<ServerCommandSource> context) {
+	private static int giveOrbitalStrikeRodWithCount(CommandContext<CommandSourceStack> context) {
 		int count = IntegerArgumentType.getInteger(context, "count");
 		return giveRods(context, count);
 	}
 
-	private static int giveRods(CommandContext<ServerCommandSource> context, int count) {
+	private static int giveRods(CommandContext<CommandSourceStack> context, int count) {
 		String strikeType = StringArgumentType.getString(context, "type");
 
 		if (!strikeType.equalsIgnoreCase("stab") && !strikeType.equalsIgnoreCase("nuke")) {
-			context.getSource().sendError(Text.literal("Invalid type! Use: stab or nuke"));
+			context.getSource().sendFailure(Component.literal("Invalid type! Use: stab or nuke"));
 			return 0;
 		}
 
-		ServerPlayerEntity player = context.getSource().getPlayer();
+		ServerPlayer player = context.getSource().getPlayer();
 		if (player == null) {
-			context.getSource().sendError(Text.literal("This command must be run by a player!"));
+			context.getSource().sendFailure(Component.literal("This command must be run by a player!"));
 			return 0;
 		}
 
 		for (int i = 0; i < count; i++) {
 			ItemStack fishingRod = new ItemStack(Items.FISHING_ROD);
-			fishingRod.setDamage(fishingRod.getMaxDamage() - 1);
+			fishingRod.setDamageValue(fishingRod.getMaxDamage() - 1);
 
-			NbtCompound nbt = new NbtCompound();
+			CompoundTag nbt = new CompoundTag();
 			nbt.putString("OrbitalStrikeType", strikeType.toLowerCase());
-			fishingRod.set(DataComponentTypes.CUSTOM_DATA, NbtComponent.of(nbt));
+			fishingRod.set(DataComponents.CUSTOM_DATA, CustomData.of(nbt));
 
 			String displayName = strikeType.equalsIgnoreCase("stab") ? "stab shot" : "nuke shot";
-			fishingRod.set(DataComponentTypes.CUSTOM_NAME, Text.literal(displayName));
+			fishingRod.set(DataComponents.CUSTOM_NAME, Component.literal(displayName));
 
-			player.giveItemStack(fishingRod);
+			player.addItem(fishingRod);
 		}
 
 		String typeName = strikeType.equalsIgnoreCase("stab") ? "Stab Shot" : "Nuke Shot";
-		context.getSource().sendFeedback(() ->
-			Text.literal("§aGave " + count + "x " + typeName + " to " + player.getName().getString()),
+		context.getSource().sendSuccess(() ->
+			Component.literal("§aGave " + count + "x " + typeName + " to " + player.getName().getString()),
 			true
 		);
 

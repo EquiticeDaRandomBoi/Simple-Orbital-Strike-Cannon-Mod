@@ -10,9 +10,6 @@ gradle/wrapper/gradle-wrapper.jar
 .idea/
 *.iml
 .vscode/
-.zencoder/
-.zenflow/
-.claude/
 
 # Runtime
 run/
@@ -23,10 +20,9 @@ Thumbs.db
 
 # Misc
 *.log
-build-all-versions.ps1
-build-legacy.ps1
-build-modern.ps1
-build-121-only.ps1
-build-remaining.ps1
-build-1.21.11-only.ps1
+build-*.ps1
+upload-*.ps1
+*-upload.ps1
+*-update.ps1
+verify-*.ps1
 releases/
