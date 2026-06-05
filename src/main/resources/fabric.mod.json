@@ -13,14 +13,20 @@
 	"entrypoints": {
 		"main": [
 			"com.orbitalstrike.OrbitalStrikeMod"
+		],
+		"modmenu": [
+			"com.orbitalstrike.ModMenuIntegration"
 		]
 	},
 	"mixins": [],
 	"depends": {
 		"fabricloader": ">=0.15.0",
-		"minecraft": ">=26.1",
-		"java": ">=25",
-		"fabric-api": "*"
+		"minecraft": ">=1.21",
+		"java": ">=21",
+		"fabric-api": "*",
+		"cloth-config": ">=20.0.0"
 	},
-	"suggests": {}
+	"suggests": {
+		"modmenu": "*"
+	}
 }

@@ -1,0 +1,18 @@
+{
+	"config.orbitalstrike.title": "Simple Orbital Strike Config",
+
+	"config.orbitalstrike.nukeRadius": "Nuke Radius",
+	"config.orbitalstrike.nukeRadius.tooltip": "Max ring radius for nuke strike (blocks). Larger = bigger explosion. Default: 30",
+
+	"config.orbitalstrike.nukeRingStep": "Ring Step",
+	"config.orbitalstrike.nukeRingStep.tooltip": "Gap between nuke rings (blocks). Smaller = more rings = more TNT. Default: 3",
+
+	"config.orbitalstrike.nukeFuse": "TNT Fuse (ticks)",
+	"config.orbitalstrike.nukeFuse.tooltip": "How long TNT burns before exploding. 20 ticks = 1 second. Default: 80",
+
+	"config.orbitalstrike.strikeDelay": "Strike Delay (ms)",
+	"config.orbitalstrike.strikeDelay.tooltip": "Delay in milliseconds before the strike arrives after firing. Default: 1000",
+
+	"config.orbitalstrike.permissionLevel": "Permission Level",
+	"config.orbitalstrike.permissionLevel.tooltip": "Operator level required to use /orbitalstrike. 0=everyone, 1=moderator, 2=gamemaster, 3=admin, 4=owner. Default: 2"
+}

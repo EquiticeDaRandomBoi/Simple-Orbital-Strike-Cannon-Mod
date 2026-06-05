@@ -1,29 +1,29 @@
 package com.orbitalstrike;
 
-import net.minecraft.core.BlockPos;
-import net.minecraft.server.level.ServerLevel;
-import net.minecraft.world.entity.item.PrimedTnt;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.level.Level;
+import net.minecraft.entity.TntEntity;
+import net.minecraft.server.world.ServerWorld;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
+import net.minecraft.entity.player.PlayerEntity;
 
 public class OrbitalStrikeHandler {
 
-	public static void executeStrike(Level level, BlockPos targetPos, Player player, String strikeType) {
-		if (!(level instanceof ServerLevel serverLevel)) {
+	public static void executeStrike(World world, BlockPos targetPos, PlayerEntity player, String strikeType) {
+		if (!(world instanceof ServerWorld serverWorld)) {
 			return;
 		}
 
 		new Thread(() -> {
 			try {
-				Thread.sleep(1000);
+				Thread.sleep(OrbitalStrikeConfig.get().strikeDelay);
 
-				serverLevel.getServer().execute(() -> {
+				serverWorld.getServer().execute(() -> {
 					switch (strikeType.toLowerCase()) {
 						case "stab":
-							spawnStabStrike(serverLevel, targetPos);
+							spawnStabStrike(serverWorld, targetPos);
 							break;
 						case "nuke":
-							spawnNukeStrike(serverLevel, targetPos);
+							spawnNukeStrike(serverWorld, targetPos);
 							break;
 					}
 				});
@@ -33,42 +33,34 @@ public class OrbitalStrikeHandler {
 		}).start();
 	}
 
-	private static void spawnStabStrike(ServerLevel level, BlockPos targetPos) {
-		int minY = level.getMinY();
-		int maxY = level.getMaxY();
+	private static void spawnStabStrike(ServerWorld world, BlockPos targetPos) {
+		int minY = world.getDimension().minY();
+		int maxY = minY + world.getDimension().height() - 1;
 		int bedrockY = minY + 1;
 
 		for (int y = maxY; y >= bedrockY; y--) {
 			BlockPos tntPos = new BlockPos(targetPos.getX(), y, targetPos.getZ());
-			spawnTNT(level, tntPos, 1);
+			spawnTNT(world, tntPos, 1);
 		}
 	}
 
-	private static void spawnNukeStrike(ServerLevel level, BlockPos targetPos) {
+	private static void spawnNukeStrike(ServerWorld world, BlockPos targetPos) {
 		int spawnHeight = targetPos.getY() + 60;
 		int centerX = targetPos.getX();
 		int centerZ = targetPos.getZ();
 
-		PrimedTnt centerTnt = new PrimedTnt(level, centerX + 0.5, spawnHeight, centerZ + 0.5, null);
-		centerTnt.setFuse(80);
-		level.addFreshEntity(centerTnt);
+		OrbitalStrikeConfig cfg = OrbitalStrikeConfig.get();
 
-		// Spawn each ring on a separate tick to avoid a single-tick entity spike.
-		// 10 rings spread over 10 ticks (0.5s) is imperceptible before the 4s fuse.
-		new Thread(() -> {
-			try {
-				for (int radius = 3; radius <= 30; radius += 3) {
-					final int r = radius;
-					level.getServer().execute(() -> spawnRing(level, centerX, centerZ, spawnHeight, r));
-					Thread.sleep(50);
-				}
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
-		}).start();
+		TntEntity centerTnt = new TntEntity(world, centerX + 0.5, spawnHeight, centerZ + 0.5, null);
+		centerTnt.setFuse(cfg.nukeFuse);
+		world.spawnEntity(centerTnt);
+
+		for (int radius = 3; radius <= cfg.nukeRadius; radius += cfg.nukeRingStep) {
+			spawnRing(world, centerX, centerZ, spawnHeight, radius, cfg.nukeFuse);
+		}
 	}
 
-	private static void spawnRing(ServerLevel level, int centerX, int centerZ, int spawnHeight, int radius) {
+	private static void spawnRing(ServerWorld world, int centerX, int centerZ, int spawnHeight, int radius, int fuse) {
 		int tntPerRing = (int)(radius * 2 * Math.PI);
 		double velocityMultiplier = radius * 0.05;
 		double fragmentationFactor = radius / 10.0;
@@ -82,16 +74,16 @@ public class OrbitalStrikeHandler {
 			double velocityX = Math.cos(angle + randomAngleOffset) * (velocityMultiplier + randomSpeedOffset);
 			double velocityZ = Math.sin(angle + randomAngleOffset) * (velocityMultiplier + randomSpeedOffset);
 
-			PrimedTnt tnt = new PrimedTnt(level, centerX + 0.5, spawnHeight, centerZ + 0.5, null);
-			tnt.setFuse(80);
-			tnt.setDeltaMovement(velocityX, 0, velocityZ);
-			level.addFreshEntity(tnt);
+			TntEntity tnt = new TntEntity(world, centerX + 0.5, spawnHeight, centerZ + 0.5, null);
+			tnt.setFuse(fuse);
+			tnt.setVelocity(velocityX, 0, velocityZ);
+			world.spawnEntity(tnt);
 		}
 	}
 
-	private static void spawnTNT(ServerLevel level, BlockPos pos, int fuseTicks) {
-		PrimedTnt tnt = new PrimedTnt(level, pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5, null);
+	private static void spawnTNT(ServerWorld world, BlockPos pos, int fuseTicks) {
+		TntEntity tnt = new TntEntity(world, pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5, null);
 		tnt.setFuse(fuseTicks);
-		level.addFreshEntity(tnt);
+		world.spawnEntity(tnt);
 	}
 }

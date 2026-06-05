@@ -1,19 +1,21 @@
 package com.orbitalstrike;
 
+import me.shedaniel.autoconfig.AutoConfig;
+import me.shedaniel.autoconfig.serializer.GsonConfigSerializer;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.event.player.UseItemCallback;
-import net.minecraft.core.BlockPos;
-import net.minecraft.core.component.DataComponents;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResult;
-import net.minecraft.world.entity.EquipmentSlot;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
-import net.minecraft.world.item.component.CustomData;
-import net.minecraft.world.phys.BlockHitResult;
-import net.minecraft.world.phys.HitResult;
+import net.minecraft.component.DataComponentTypes;
+import net.minecraft.component.type.NbtComponent;
+import net.minecraft.entity.EquipmentSlot;
+import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
+import net.minecraft.nbt.NbtCompound;
+import net.minecraft.util.ActionResult;
+import net.minecraft.util.Hand;
+import net.minecraft.util.hit.BlockHitResult;
+import net.minecraft.util.hit.HitResult;
+import net.minecraft.util.math.BlockPos;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -23,43 +25,44 @@ public class OrbitalStrikeMod implements ModInitializer {
 
 	@Override
 	public void onInitialize() {
+		AutoConfig.register(OrbitalStrikeConfig.class, GsonConfigSerializer::new);
 		LOGGER.info("Initializing Orbital Strike Mod!");
 
-		UseItemCallback.EVENT.register((player, level, hand) -> {
-			ItemStack stack = player.getItemInHand(hand);
+		UseItemCallback.EVENT.register((player, world, hand) -> {
+			ItemStack stack = player.getStackInHand(hand);
 
-			if (stack.getItem() == Items.FISHING_ROD && stack.getDamageValue() == stack.getMaxDamage() - 1) {
-				CustomData customData = stack.get(DataComponents.CUSTOM_DATA);
+			if (stack.getItem() == Items.FISHING_ROD && stack.getDamage() == stack.getMaxDamage() - 1) {
+				NbtComponent customData = stack.get(DataComponentTypes.CUSTOM_DATA);
 				if (customData != null) {
-					CompoundTag nbt = customData.copyTag();
+					NbtCompound nbt = customData.copyNbt();
 					if (nbt.contains("OrbitalStrikeType")) {
 						String strikeType = nbt.getString("OrbitalStrikeType").orElse("");
 
-						if (!level.isClientSide()) {
-							HitResult hitResult = player.pick(200.0D, 0.0F, false);
+						if (!world.isClient()) {
+							HitResult hitResult = player.raycast(200.0D, 0.0F, false);
 							BlockPos targetPos;
 
 							if (hitResult.getType() == HitResult.Type.BLOCK) {
 								targetPos = ((BlockHitResult) hitResult).getBlockPos();
 							} else {
-								targetPos = BlockPos.containing(hitResult.getLocation());
+								targetPos = BlockPos.ofFloored(hitResult.getPos());
 							}
 
-							OrbitalStrikeHandler.executeStrike(level, targetPos, player, strikeType);
+							OrbitalStrikeHandler.executeStrike(world, targetPos, player, strikeType);
 						}
 
-						EquipmentSlot slot = hand == InteractionHand.MAIN_HAND ? EquipmentSlot.MAINHAND : EquipmentSlot.OFFHAND;
-						stack.hurtAndBreak(1, player, slot);
+						EquipmentSlot slot = hand == Hand.MAIN_HAND ? EquipmentSlot.MAINHAND : EquipmentSlot.OFFHAND;
+						stack.damage(1, player, slot);
 
-						return InteractionResult.SUCCESS;
+						return ActionResult.SUCCESS;
 					}
 				}
 			}
 
-			return InteractionResult.PASS;
+			return ActionResult.PASS;
 		});
 
-		CommandRegistrationCallback.EVENT.register((dispatcher, buildContext, selection) ->
+		CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) ->
 			OrbitalStrikeCommand.register(dispatcher)
 		);
 	}
