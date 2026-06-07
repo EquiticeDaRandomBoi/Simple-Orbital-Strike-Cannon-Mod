@@ -26,6 +26,7 @@ public class OrbitalStrikeMod implements ModInitializer {
 	@Override
 	public void onInitialize() {
 		AutoConfig.register(OrbitalStrikeConfig.class, GsonConfigSerializer::new);
+		OrbitalStrikeHandler.registerTickEvent();
 		LOGGER.info("Initializing Orbital Strike Mod!");
 
 		UseItemCallback.EVENT.register((player, world, hand) -> {
@@ -48,11 +49,13 @@ public class OrbitalStrikeMod implements ModInitializer {
 								targetPos = BlockPos.ofFloored(hitResult.getPos());
 							}
 
-							OrbitalStrikeHandler.executeStrike(world, targetPos, player, strikeType);
+							OrbitalStrikeHandler.executeStrike(world, targetPos, strikeType);
 						}
 
-						EquipmentSlot slot = hand == Hand.MAIN_HAND ? EquipmentSlot.MAINHAND : EquipmentSlot.OFFHAND;
-						stack.damage(1, player, slot);
+						if (!player.isCreative()) {
+							EquipmentSlot slot = hand == Hand.MAIN_HAND ? EquipmentSlot.MAINHAND : EquipmentSlot.OFFHAND;
+							stack.damage(1, player, slot);
+						}
 
 						return ActionResult.SUCCESS;
 					}
