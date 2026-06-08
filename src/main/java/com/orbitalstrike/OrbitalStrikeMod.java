@@ -39,6 +39,7 @@ public class OrbitalStrikeMod implements ModInitializer {
 					if (nbt.contains("OrbitalStrikeType")) {
 						String strikeType = nbt.getString("OrbitalStrikeType").orElse("");
 
+						player.swingHand(hand);
 						if (!world.isClient()) {
 							HitResult hitResult = player.raycast(200.0D, 0.0F, false);
 							BlockPos targetPos;
@@ -51,7 +52,6 @@ public class OrbitalStrikeMod implements ModInitializer {
 
 							OrbitalStrikeHandler.executeStrike(world, targetPos, strikeType);
 
-							player.swingHand(hand);
 							if (player.isCreative()) {
 								player.setStackInHand(hand, ItemStack.EMPTY);
 							} else {

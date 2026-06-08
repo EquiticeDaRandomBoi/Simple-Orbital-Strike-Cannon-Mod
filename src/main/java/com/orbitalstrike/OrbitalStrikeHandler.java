@@ -44,10 +44,14 @@ public class OrbitalStrikeHandler {
 		double z = targetPos.getZ() + 0.5;
 		int targetX = targetPos.getX();
 		int targetZ = targetPos.getZ();
+		List<Integer> ys = new ArrayList<>();
 		for (int y = maxY; y >= minY; y -= 4) {
 			if (!world.isAir(new BlockPos(targetX, y, targetZ))) {
-				world.createExplosion(null, x, y, z, 4.0f, false, World.ExplosionSourceType.TNT);
+				ys.add(y);
 			}
+		}
+		for (int y : ys) {
+			world.createExplosion(null, x, y, z, 8.0f, false, World.ExplosionSourceType.TNT);
 		}
 	}
 
