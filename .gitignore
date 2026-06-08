@@ -22,3 +22,6 @@ bin/
 
 # fabric
 run/
+
+# local dev instructions
+CLAUDE.md

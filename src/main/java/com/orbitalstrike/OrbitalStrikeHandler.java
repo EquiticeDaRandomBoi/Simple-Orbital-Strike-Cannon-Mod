@@ -40,10 +40,9 @@ public class OrbitalStrikeHandler {
 	private static void spawnStabStrike(ServerWorld world, BlockPos targetPos) {
 		int minY = world.getDimension().minY();
 		int maxY = minY + world.getDimension().height() - 1;
-		int bedrockY = minY + 1;
 		double x = targetPos.getX() + 0.5;
 		double z = targetPos.getZ() + 0.5;
-		for (int y = maxY; y >= bedrockY; y -= 2) {
+		for (int y = maxY; y >= minY; y -= 4) {
 			world.createExplosion(null, x, y, z, 4.0f, false, World.ExplosionSourceType.TNT);
 		}
 	}
@@ -76,11 +75,5 @@ public class OrbitalStrikeHandler {
 				world.spawnEntity(tnt);
 			}
 		}
-	}
-
-	private static void spawnTNT(ServerWorld world, BlockPos pos, int fuseTicks) {
-		TntEntity tnt = new TntEntity(world, pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5, null);
-		tnt.setFuse(fuseTicks);
-		world.spawnEntity(tnt);
 	}
 }

@@ -50,11 +50,14 @@ public class OrbitalStrikeMod implements ModInitializer {
 							}
 
 							OrbitalStrikeHandler.executeStrike(world, targetPos, strikeType);
-						}
 
-						if (!player.isCreative()) {
-							EquipmentSlot slot = hand == Hand.MAIN_HAND ? EquipmentSlot.MAINHAND : EquipmentSlot.OFFHAND;
-							stack.damage(1, player, slot);
+							player.swingHand(hand);
+							if (player.isCreative()) {
+								player.setStackInHand(hand, ItemStack.EMPTY);
+							} else {
+								EquipmentSlot slot = hand == Hand.MAIN_HAND ? EquipmentSlot.MAINHAND : EquipmentSlot.OFFHAND;
+								stack.damage(1, player, slot);
+							}
 						}
 
 						return ActionResult.SUCCESS;
