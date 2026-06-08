@@ -45,14 +45,14 @@ public class OrbitalStrikeHandler {
 		int targetX = targetPos.getX();
 		int targetZ = targetPos.getZ();
 		List<Integer> ys = new ArrayList<>();
-		for (int y = startY; y >= minY; y -= 4) {
+		for (int y = startY; y >= minY; y -= 10) {
 			if (!world.isAir(new BlockPos(targetX, y, targetZ))) {
 				ys.add(y);
 			}
 		}
 		for (int y : ys) {
 			TntEntity tnt = new TntEntity(world, x, y, z, null);
-			tnt.setFuse(1);
+			tnt.setFuse(10);
 			world.spawnEntity(tnt);
 		}
 	}
