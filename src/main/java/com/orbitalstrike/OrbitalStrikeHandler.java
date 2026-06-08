@@ -44,13 +44,16 @@ public class OrbitalStrikeHandler {
 		double z = targetPos.getZ() + 0.5;
 		int targetX = targetPos.getX();
 		int targetZ = targetPos.getZ();
+		List<Integer> ys = new ArrayList<>();
 		for (int y = maxY; y >= minY; y--) {
 			BlockPos checkPos = new BlockPos(targetX, y, targetZ);
 			if (!world.isAir(checkPos) && world.getFluidState(checkPos).isEmpty()) {
-				world.removeBlock(checkPos, false);
+				ys.add(y);
 			}
 		}
-		world.createExplosion(null, x, targetPos.getY(), z, 4.0f, false, World.ExplosionSourceType.TNT);
+		for (int i = 0; i < ys.size(); i += 4) {
+			world.createExplosion(null, x, ys.get(i), z, 5.0f, false, World.ExplosionSourceType.TNT);
+		}
 	}
 
 	private static void spawnNukeStrike(ServerWorld world, BlockPos targetPos) {
