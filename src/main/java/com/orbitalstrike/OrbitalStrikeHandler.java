@@ -45,7 +45,7 @@ public class OrbitalStrikeHandler {
 		int targetX = targetPos.getX();
 		int targetZ = targetPos.getZ();
 		List<Integer> ys = new ArrayList<>();
-		for (int y = maxY; y >= minY; y -= 4) {
+		for (int y = maxY; y >= minY; y--) {
 			if (!world.isAir(new BlockPos(targetX, y, targetZ))) {
 				ys.add(y);
 			}
