@@ -51,8 +51,8 @@ public class OrbitalStrikeHandler {
 				ys.add(y);
 			}
 		}
-		for (int i = 0; i < ys.size(); i += 4) {
-			world.createExplosion(null, x, ys.get(i), z, 5.0f, false, World.ExplosionSourceType.TNT);
+		for (int y : ys) {
+			world.createExplosion(null, x, y, z, 4.0f, false, World.ExplosionSourceType.TNT);
 		}
 	}
 
