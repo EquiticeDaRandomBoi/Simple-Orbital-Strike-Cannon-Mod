@@ -39,19 +39,19 @@ public class OrbitalStrikeHandler {
 
 	private static void spawnStabStrike(ServerWorld world, BlockPos targetPos) {
 		int minY = world.getDimension().minY();
-		int maxY = minY + world.getDimension().height() - 1;
+		int startY = targetPos.getY() + 60;
 		double x = targetPos.getX() + 0.5;
 		double z = targetPos.getZ() + 0.5;
 		int targetX = targetPos.getX();
 		int targetZ = targetPos.getZ();
 		List<Integer> ys = new ArrayList<>();
-		for (int y = maxY; y >= minY; y -= 4) {
+		for (int y = startY; y >= minY; y -= 4) {
 			if (!world.isAir(new BlockPos(targetX, y, targetZ))) {
 				ys.add(y);
 			}
 		}
 		for (int y : ys) {
-			world.createExplosion(null, x, y, z, 8.0f, false, World.ExplosionSourceType.TNT);
+			world.createExplosion(null, x, y, z, 4.0f, false, World.ExplosionSourceType.TNT);
 		}
 	}
 
