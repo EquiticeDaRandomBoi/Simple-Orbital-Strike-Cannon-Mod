@@ -1,0 +1,22 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "TTT",
+    "TFT",
+    "TTT"
+  ],
+  "key": {
+    "T": { "item": "minecraft:tnt" },
+    "F": { "item": "minecraft:fishing_rod" }
+  },
+  "result": {
+    "id": "minecraft:fishing_rod",
+    "count": 32,
+    "components": {
+      "minecraft:damage": 63,
+      "minecraft:custom_data": { "OrbitalStrikeType": "nuke" },
+      "minecraft:custom_name": { "text": "nuke shot", "italic": false }
+    }
+  }
+}
