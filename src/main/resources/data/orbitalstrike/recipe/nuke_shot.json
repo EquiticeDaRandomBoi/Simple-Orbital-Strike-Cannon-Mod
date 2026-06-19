@@ -7,8 +7,8 @@
     "TTT"
   ],
   "key": {
-    "T": { "item": "minecraft:tnt" },
-    "F": { "item": "minecraft:fishing_rod" }
+    "T": "minecraft:tnt",
+    "F": "minecraft:fishing_rod"
   },
   "result": {
     "id": "minecraft:fishing_rod",
