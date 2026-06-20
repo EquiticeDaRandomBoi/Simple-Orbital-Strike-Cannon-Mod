@@ -1,5 +1,5 @@
 {
-  "type": "minecraft:crafting_shaped",
+  "type": "orbitalstrike:shaped",
   "category": "misc",
   "pattern": [
     " T ",
