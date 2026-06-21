@@ -15,7 +15,7 @@
     "components": {
       "minecraft:damage": 63,
       "minecraft:custom_data": { "OrbitalStrikeType": "stab" },
-      "minecraft:custom_name": { "text": "stab shot", "italic": false }
+      "minecraft:custom_name": "{\"text\":\"stab shot\",\"italic\":false}"
     }
   }
 }

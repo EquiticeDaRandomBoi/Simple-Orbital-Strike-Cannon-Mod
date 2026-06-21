@@ -15,7 +15,7 @@
     "components": {
       "minecraft:damage": 63,
       "minecraft:custom_data": { "OrbitalStrikeType": "nuke" },
-      "minecraft:custom_name": { "text": "nuke shot", "italic": false }
+      "minecraft:custom_name": "{\"text\":\"nuke shot\",\"italic\":false}"
     }
   }
 }
