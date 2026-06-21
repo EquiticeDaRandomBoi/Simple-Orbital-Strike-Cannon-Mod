@@ -23,5 +23,13 @@ bin/
 # fabric
 run/
 
-# local dev instructions
-CLAUDE.md
+# local notes and scratch
+*.md
+!README.md
+
+# local build logs and helper scripts
+*.txt
+*.ps1
+runs/
+releases/
+nobgthingwemmbu.png
